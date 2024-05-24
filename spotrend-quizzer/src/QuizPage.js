@@ -33,7 +33,7 @@ function QuizPage() {
     // console.log('dans fetchQuestion')
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8080/generate-question');
+      const response = await fetch(`${apiUrl}/generate-question`);
       if (!response.ok) {
         throw new Error('Failed to fetch question');
       }

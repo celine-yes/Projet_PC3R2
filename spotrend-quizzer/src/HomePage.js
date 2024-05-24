@@ -6,6 +6,8 @@ import userIcon from './user.svg';
 import logoutIcon from './logout.png'; 
 import './styles/HomePage.css';
 
+import {apiUrl} from './App' 
+
 
 function HomePage() {
   const [isConnected, setIsConnected] = useState(!!localStorage.getItem('userToken')); // Détermine si l'utilisateur est connecté
@@ -31,7 +33,7 @@ function HomePage() {
    async function fetchTopPlayers () {
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:8080/topPlayers', {
+      const response = await fetch(`${apiUrl}/topPlayers`, {
         method: 'GET',
         headers: {
           'Content-Type' : 'application/json'

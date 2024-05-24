@@ -19,7 +19,7 @@ function ResultPage() {
     const fetchQuizResults = async () => {
       const token = localStorage.getItem('userToken');
       try {
-        const response = await fetch('http://localhost:8080/get-result', {
+        const response = await fetch(`${apiUrl}/get-result`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

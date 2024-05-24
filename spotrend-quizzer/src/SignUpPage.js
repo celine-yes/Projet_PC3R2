@@ -37,7 +37,7 @@ function SignUpPage() {
 };
 
   async function signUp(pseudo, password) {
-    const response = await fetch('http://localhost:8080/signup', {
+    const response = await fetch(`${apiUrl}/signup`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
