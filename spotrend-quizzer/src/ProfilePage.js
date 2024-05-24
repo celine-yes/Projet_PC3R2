@@ -5,7 +5,7 @@ import userIcon from './user.svg';
 import logoutIcon from './logout.png';
 import './styles/ProfilePage.css';
 
-import {apiUrl} from './App'
+import { apiUrl } from './App';
 
 function ProfilePage() {
   const [userInfo, setUserInfo] = useState(null);

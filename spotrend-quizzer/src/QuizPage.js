@@ -5,6 +5,8 @@ import userIcon from './user.svg';
 import logoutIcon from './logout.png'; 
 import './styles/QuizPage.css';
 
+import { apiUrl } from './App';
+
 function QuizPage() {
   const [isConnected, setIsConnected] = useState(!!localStorage.getItem('userToken'));
   const [question, setQuestion] = useState(null);

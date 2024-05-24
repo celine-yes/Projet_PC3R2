@@ -5,6 +5,8 @@ import userIcon from './user.svg';
 import logoutIcon from './logout.png'; 
 import './styles/ResultPage.css';
 
+import { apiUrl } from './App';
+
 function ResultPage() {
   const location = useLocation();
   const [userClassement, setUserClassement] = useState([]);

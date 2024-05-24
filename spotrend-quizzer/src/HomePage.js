@@ -6,7 +6,7 @@ import userIcon from './user.svg';
 import logoutIcon from './logout.png'; 
 import './styles/HomePage.css';
 
-import {apiUrl} from './App' 
+import { apiUrl } from './App';
 
 
 function HomePage() {

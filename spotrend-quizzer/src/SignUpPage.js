@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import './styles/SignInUpPage.css';
 import logo from './logo.svg'; 
 
+import { apiUrl } from './App';
+
 function SignUpPage() {
   const navigate = useNavigate();
   // État local pour stocker les valeurs des champs du formulaire

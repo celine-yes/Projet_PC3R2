@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import './styles/SignInUpPage.css';
 import logo from './logo.svg'; 
 
+import { apiUrl } from './App';
+
 function SignInPage() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
