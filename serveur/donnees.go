@@ -20,21 +20,7 @@ const (
 	SpotifyclientSecret = "1f99f3d3b49740939cb2c4fb7eef78a1"
 )
 
-// var mongoURI = "mongodb+srv://celine21106:NVwe27nqvJ2TCt1Y@cluster0.chcv8d1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-
-func constructMongoURI() string {
-    host := os.Getenv("MONGOHOST")
-    port := os.Getenv("MONGOPORT")
-    user := os.Getenv("MONGOUSER")
-    password := os.Getenv("MONGOPASSWORD")
-
-    if host == "" || port == "" || user == "" || password == "" {
-        log.Fatal("MongoDB environment variables not set properly")
-    }
-
-    uri := fmt.Sprintf("mongodb://%s:%s@%s:%s", user, password, host, port)
-    return uri
-}
+var mongoURI = "mongodb+srv://celine21106:NVwe27nqvJ2TCt1Y@cluster0.chcv8d1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 // Connexion à la base de données MongoDB
 func connectToMongo() (*mongo.Client, error) {
@@ -76,24 +62,6 @@ type CountryTracks struct {
 	Tracks  []Track `json:"tracks"`
 }
 
-// func main() {
-// 	//  token,_ := getAccessToken()
-// 	//  fmt.Println("Token: ", token)
-// 	playlistsCountry := createPlaylistCountryList()
-// 	saveFromPlaylistCountryList(playlistsCountry)
-
-// 	// savePlaylistAndTracks("FR")
-
-// 	question, _ := generateQuizQuestionFromTracks()
-
-// 	for i, choice := range question.Choices {
-// 		fmt.Printf("Choix %d: %s\n", i+1, choice)
-// 	}
-// 	fmt.Println("Quelle est la piste la plus populaire ?")
-// 	fmt.Println("Réponse:", question.Answer)
-
-// }
-
 func createPlaylistCountryList() []PlaylistCountry {
 	list := []PlaylistCountry{
 		{"37i9dQZEVXbIPWwFssbupI", "FR"},
@@ -120,43 +88,6 @@ func createTOP50Playlists() []PlaylistCountry {
 	return list
 }
 
-// func generateQuizQuestionFromTracks() (QuestionTrend, error) {
-// 	//connexion à MongoDB
-// 	client, err := connectToMongo()
-// 	if err != nil {
-// 		return QuestionTrend{}, fmt.Errorf("erreur lors de la connexion à MongoDB: %w", err)
-// 	}
-// 	defer client.Disconnect(context.TODO())
-
-// 	db := client.Database("spotifyData")
-// 	tracksCollection := db.Collection("tracks")
-
-// 	pipeline := mongo.Pipeline{
-// 		{{"$sample", bson.D{{"size", 4}}}},
-// 	}
-// 	cursor, err := tracksCollection.Aggregate(context.Background(), pipeline)
-// 	if err != nil {
-// 		return QuestionTrend{}, fmt.Errorf("erreur lors de l'agrégation des pistes: %v", err)
-// 	}
-// 	defer cursor.Close(context.TODO())
-
-// 	var tracks []Track
-// 	if err = cursor.All(context.TODO(), &tracks); err != nil {
-// 		return QuestionTrend{}, fmt.Errorf("erreur lors de la récupération des pistes: %v", err)
-// 	}
-
-// 	var mostPopular Track
-// 	question := QuestionTrend{}
-// 	for i, track := range tracks {
-// 		question.Choices[i] = track.Name
-// 		if track.Popularity > mostPopular.Popularity {
-// 			mostPopular = track
-// 			question.Answer = track.Name
-// 		}
-// 	}
-
-// 	return question, nil
-// }
 
 func saveFromPlaylistCountryList(playlistCountries []PlaylistCountry) error {
 	client, err := connectToMongo()
@@ -167,7 +98,7 @@ func saveFromPlaylistCountryList(playlistCountries []PlaylistCountry) error {
 
 	tracksCollection := client.Database("spotifyData").Collection("tracks")
 
-	// Vider la collection avant l'insertion des nouveaux documents
+	//vide la collection avant l'insertion des nouveaux documents
 	_, err = tracksCollection.DeleteMany(context.Background(), bson.M{})
 	if err != nil {
 		return fmt.Errorf("erreur lors du vidage de la collection top50: %w", err)
@@ -218,7 +149,6 @@ func extractArtistNames(artistsData []interface{}) ([]string, []Artist) {
 		artistID, _ := artistMap["id"].(string)
 		artistName, _ := artistMap["name"].(string)
 		artistPopularity, _ := artistMap["popularity"].(int)
-		//artistPopularity := int(popularityValue)
 
 		artistNames = append(artistNames, artistName)
 		artistDetails = append(artistDetails, Artist{
@@ -326,7 +256,7 @@ func updateArtistsPopularityAndGenre() error {
 	}
 
 	for _, artist := range artists {
-		// Faire une requête GET à l'API Spotify pour cet artiste en utilisant artist.ID
+		//fait une requête GET à l'API Spotify pour cet artiste en utilisant artist.ID
 		artistURL := fmt.Sprintf("https://api.spotify.com/v1/artists/%s", artist.ID)
 
 		req, err := http.NewRequest("GET", artistURL, nil)
@@ -358,7 +288,7 @@ func updateArtistsPopularityAndGenre() error {
 			continue
 		}
 
-		// Mettre à jour la popularité et les genres de l'artiste dans MongoDB
+		// met à jour la popularité et les genres de l'artiste dans MongoDB
 		update := bson.M{
 			"$set": bson.M{
 				"popularity": spotifyArtist.Popularity,
@@ -386,13 +316,13 @@ func saveTop50Playlists(playlists []PlaylistCountry) error {
 	defer client.Disconnect(context.TODO())
 
 	top50Collection := client.Database("spotifyData").Collection("top50")
-	// Vider la collection 'top50' avant l'insertion des nouveaux documents
+	//vide la collection 'top50' avant l'insertion des nouveaux documents
 	_, err = top50Collection.DeleteMany(context.Background(), bson.M{})
 	if err != nil {
 		return fmt.Errorf("erreur lors du vidage de la collection top50: %w", err)
 	}
 
-	// Récupérer les tracks pour chaque playlist et les sauvegarder
+	//récupère les tracks pour chaque playlist et les sauvegarder
 	for _, pc := range playlists {
 		tracks, err := saveTracksFromPlaylist(pc.PlaylistID, pc.Country)
 		if err != nil {
@@ -400,13 +330,13 @@ func saveTop50Playlists(playlists []PlaylistCountry) error {
 			continue
 		}
 
-		// Créer un document pour le pays avec sa liste de tracks
+		//crée un document pour le pays avec sa liste de tracks
 		countryTracks := CountryTracks{
 			Country: pc.Country,
 			Tracks:  tracks,
 		}
 
-		// Insérer le document dans la collection 'top50'
+		// insére le document dans la collection 'top50'
 		_, err = top50Collection.InsertOne(context.Background(), countryTracks)
 		if err != nil {
 			log.Printf("Erreur lors de l'insertion des tracks pour le pays %s dans la collection top50: %v", pc.Country, err)
@@ -420,33 +350,31 @@ func getAccessToken() (string, error) {
 	// URL pour obtenir le token d'accès
 	tokenURL := "https://accounts.spotify.com/api/token"
 
-	// Créer le corps de la requête
 	requestBody := url.Values{}
 	requestBody.Set("grant_type", "client_credentials")
 	requestBody.Set("client_id", SpotifyclientID)
 	requestBody.Set("client_secret", SpotifyclientSecret)
 
-	// Créer la requête
 	req, err := http.NewRequest("POST", tokenURL, strings.NewReader(requestBody.Encode()))
 	if err != nil {
 		return "", err
 	}
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
-	// Envoyer la requête
+	// envoye la requête
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return "", err
 	}
 	defer resp.Body.Close()
 
-	// Lire la réponse
+	// Lit la réponse
 	responseBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
 	}
 
-	// Extraire le token d'accès
+	// Extrait le token d'accès
 	var result map[string]interface{}
 	if err := json.Unmarshal(responseBody, &result); err != nil {
 		return "", err
